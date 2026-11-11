@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "infra:up": "bash scripts/dev-infra.sh",
+    "infra:stop": "docker-compose stop postgres",
+    "dev": "pnpm run infra:up && nx run-many -t dev --projects=simmer-web,simmer-backend --parallel=2"
   },
   "keywords": [],
   "author": "",

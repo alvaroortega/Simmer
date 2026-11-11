@@ -43,3 +43,6 @@ htmlcov/
 
 # local planning docs
 docs/
+
+#env
+backend/.env

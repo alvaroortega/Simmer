@@ -30,15 +30,42 @@ Nx monorepo (pnpm):
 
 ## Development
 
+Prerequisites: Node + pnpm, [uv](https://docs.astral.sh/uv/), and Docker with `docker-compose`. On macOS the infra script starts [Colima](https://github.com/abiosoft/colima) if Docker isn't already running.
+
 ```sh
 pnpm install
 cd backend && uv sync && cd ..
 
-pnpm exec nx dev simmer-backend   # API on http://localhost:8000
-pnpm exec nx serve simmer-web     # UI on http://localhost:4200
+pnpm dev   # starts Postgres, then the API and UI in parallel
 ```
 
-In development the Vite server proxies `/api/*` to the backend, with the `/api` prefix removed.
+- UI: http://localhost:4200
+- API: http://localhost:8000. In development the Vite server proxies `/api/*` to the backend, with the `/api` prefix removed.
+
+To run the pieces separately:
+
+```sh
+pnpm infra:up                     # start Postgres and wait until it's healthy
+pnpm exec nx dev simmer-backend   # API
+pnpm exec nx serve simmer-web     # UI
+pnpm infra:stop                   # stop Postgres (data is kept)
+```
+
+### Database
+
+Local PostgreSQL 18 runs from `compose.yaml`, bound to `127.0.0.1:5432` only:
+
+| Setting  | Value          |
+|----------|----------------|
+| Database | `simmer`       |
+| User     | `simmer`       |
+| Password | `simmer_local` |
+
+```
+postgresql://simmer:simmer_local@127.0.0.1:5432/simmer
+```
+
+These credentials are for local development only. Data persists in the `postgres_data` Docker volume. To wipe it and start fresh, run `docker-compose down -v`.
 
 ```sh
 pnpm exec nx run-many -t test typecheck lint
