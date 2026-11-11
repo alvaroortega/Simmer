@@ -1,15 +1,33 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import App from './app';
 
 describe('App', () => {
-  it('should render successfully', () => {
-    const { baseElement } = render(<App />);
-    expect(baseElement).toBeTruthy();
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
-  it('should have a greeting as the title', () => {
-    const { getAllByText } = render(<App />);
-    expect(getAllByText(new RegExp('Welcome web', 'gi')).length > 0).toBeTruthy();
+  it('shows the API status when the health check succeeds', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ status: 'ok' }), { status: 200 })
+      )
+    );
+
+    render(<App />);
+
+    expect(await screen.findByText('API: ok')).toBeTruthy();
+    expect(fetch).toHaveBeenCalledWith('/api/health', expect.anything());
+  });
+
+  it('shows an error when the API is unreachable', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Failed to fetch')));
+
+    render(<App />);
+
+    expect(
+      await screen.findByText('API: unreachable (Failed to fetch)')
+    ).toBeTruthy();
   });
 });
