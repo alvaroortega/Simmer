@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-
+from sqlalchemy.orm import DeclarativeBase
 from simmer_backend.config import settings
 
 engine = create_engine(
@@ -7,3 +7,6 @@ engine = create_engine(
     pool_pre_ping=True,
     connect_args={"connect_timeout": 5},
 )
+
+class Base(DeclarativeBase):
+    pass
