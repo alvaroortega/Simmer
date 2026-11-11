@@ -40,3 +40,6 @@ htmlcov/
 
 # logs
 *.log
+
+# local planning docs
+docs/
