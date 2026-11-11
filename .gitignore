@@ -1,0 +1,42 @@
+# deps
+node_modules/
+
+# nx
+.nx/cache
+.nx/workspace-data
+
+# build / test output
+dist/
+tmp/
+out-tsc/
+coverage/
+*.tsbuildinfo
+.vitest
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
+
+# python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# logs
+*.log
