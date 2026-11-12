@@ -4,6 +4,7 @@ from alembic import context
 
 from simmer_backend.config import settings
 from simmer_backend.database import Base, engine
+import simmer_backend.models
 
 config = context.config
 
