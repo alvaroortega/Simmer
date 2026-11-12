@@ -9,6 +9,14 @@
         "cwd": "backend",
         "command": "uv run fastapi dev src/simmer_backend/main.py"
       }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "backend",
+        "command": "uv run pytest"
+      }
     }
   }
 }

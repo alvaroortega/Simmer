@@ -1,5 +1,5 @@
 from collections.abc import Iterator
-from simmer_backend.config import settings
+from simmer_backend.core.config import settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase
 

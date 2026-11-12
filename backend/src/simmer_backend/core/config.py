@@ -1,12 +1,15 @@
 from pathlib import Path
+from uuid import UUID
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-BACKEND_DIR = Path(__file__).resolve().parents[2]
+BACKEND_DIR = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
     database_url: str
+    # Stand-in owner until real authentication exists.
+    dev_owner_id: UUID
 
     model_config = SettingsConfigDict(
         env_file=BACKEND_DIR / ".env",

@@ -1,3 +1,5 @@
+from datetime import datetime
+from typing import Literal
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -38,3 +40,22 @@ class RecipeContent(InputModel):
 
 class RecipeCreate(InputModel):
     content: RecipeContent
+
+
+class RecipeVersionRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    schema_version: int
+    origin: Literal["extracted", "user_edit", "ai_proposal"]
+    review_status: Literal["draft", "approved", "rejected"]
+    content: RecipeContent
+    created_at: datetime
+    approved_at: datetime | None
+
+
+class RecipeRead(BaseModel):
+    id: UUID
+    created_at: datetime
+    updated_at: datetime
+    current_version: RecipeVersionRead

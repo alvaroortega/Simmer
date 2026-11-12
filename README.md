@@ -28,13 +28,29 @@ Nx monorepo (pnpm):
 - `apps/web` — React + TypeScript + Vite frontend (`simmer-web`)
 - `backend` — Python 3.13 + FastAPI backend managed with uv (`simmer-backend`)
 
+Backend package layout (`backend/src/simmer_backend/`):
+
+```
+main.py            # creates the FastAPI app, registers routes
+core/config.py     # settings loaded from backend/.env
+db/session.py      # engine and sessions
+db/models.py       # SQLAlchemy tables
+db/migrations/     # Alembic migrations (configured in pyproject.toml)
+api/dependencies.py  # shared request dependencies (DB session, current owner)
+api/routes/        # endpoints, one module per resource
+schemas/           # Pydantic request/response models
+```
+
 ## Development
 
 Prerequisites: Node + pnpm, [uv](https://docs.astral.sh/uv/), and Docker with `docker-compose`. On macOS the infra script starts [Colima](https://github.com/abiosoft/colima) if Docker isn't already running.
 
 ```sh
 pnpm install
-cd backend && uv sync && cd ..
+cd backend && uv sync && cp .env.example .env && cd ..
+
+pnpm infra:up                                   # start Postgres
+(cd backend && uv run alembic upgrade head)     # apply migrations
 
 pnpm dev   # starts Postgres, then the API and UI in parallel
 ```
@@ -67,6 +83,23 @@ postgresql://simmer:simmer_local@127.0.0.1:5432/simmer
 
 These credentials are for local development only. Data persists in the `postgres_data` Docker volume. To wipe it and start fresh, run `docker-compose down -v`.
 
+The backend reads its settings from `backend/.env` (see `backend/.env.example`):
+
+- `DATABASE_URL` — SQLAlchemy URL of the dev database.
+- `DEV_OWNER_ID` — the UUID that owns all data until real authentication exists.
+
+Schema changes go through Alembic, run from `backend/`:
+
 ```sh
-pnpm exec nx run-many -t test typecheck lint
+uv run alembic revision --autogenerate -m "describe change"   # then review the generated file
+uv run alembic upgrade head
 ```
+
+### Tests
+
+```sh
+pnpm exec nx test simmer-backend   # pytest, against a real Postgres
+pnpm exec nx run-many -t test typecheck lint -p simmer-web
+```
+
+Backend tests need Postgres running. They create and migrate a separate `simmer_test` database (override with `TEST_DATABASE_URL`) and empty its tables after each test, so the dev data is never touched.

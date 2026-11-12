@@ -13,7 +13,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
-from simmer_backend.database import Base
+from simmer_backend.db.session import Base
 
 
 class Recipe(Base):

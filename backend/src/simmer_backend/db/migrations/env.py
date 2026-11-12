@@ -1,15 +1,17 @@
-from logging.config import fileConfig
+import logging
 
 from alembic import context
 
-from simmer_backend.config import settings
-from simmer_backend.database import Base, engine
-import simmer_backend.models
+from simmer_backend.core.config import settings
+from simmer_backend.db.session import Base, engine
+import simmer_backend.db.models  # noqa: F401  (registers tables on Base.metadata)
 
 config = context.config
 
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+# Config lives in pyproject.toml (no alembic.ini), so set up logging here:
+# show Alembic's progress messages, keep SQLAlchemy quiet.
+logging.basicConfig(format="%(levelname)-5.5s [%(name)s] %(message)s")
+logging.getLogger("alembic").setLevel(logging.INFO)
 
 target_metadata = Base.metadata
 
